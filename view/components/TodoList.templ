@@ -1,0 +1,103 @@
+package components
+
+import "github.com/Garv2003/TODOLIST/models"
+
+templ TodoList(TodoList []models.Todo) {
+	<div class="flex flex-col gap-2" id="todo_list">
+		if len(TodoList) == 0 {
+			<p class="text-center">No Todos</p>
+		}
+		for _,todo:= range TodoList {
+			@Todo(todo)
+		}
+	</div>
+}
+
+templ Todo(todo models.Todo) {
+	<div
+		class="mb-2 p-2 bg-white rounded-lg shadow"
+		id={ "_" + todo.Id }
+		x-data="{ open: false }"
+	>
+		<div class="flex justify-between items-center gap-4 cursor-pointer text-md">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="icon icon-tabler icon-tabler-circle-check"
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				stroke-width="2"
+				border="1"
+				stroke="#fff"
+				fill="none"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				hx-post={ "/toggle/" + todo.Id }
+				hx-trigger="click"
+				hx-target={ "#_" + todo.Id }
+				hx-swap="outerHTML"
+			>
+				<path stroke="none" d="M0 0h24v24H0z" fill="none" class="border border-[#00AA45]"></path>
+				if todo.IsCompleted {
+					<circle cx="12" cy="12" r="9" fill="#00AA45"></circle>
+				} else {
+					<circle cx="12" cy="12" r="9" fill="#fff"></circle>
+				}
+				<path d="M9 12l2 2l4 -4"></path>
+			</svg>
+			if todo.IsCompleted {
+				<p class="ml-1 line-through">
+					{ todo.Content }
+				</p>
+			} else {
+				<p class="ml-1">
+					{ todo.Content }
+				</p>
+			}
+			<div
+				class="flex gap-2"
+			>
+				<button
+					class="bg-blue-500 text-white px-2 py-1 rounded"
+					x-on:click="open = ! open"
+				>Edit</button>
+				<button
+					hx-delete={ "/delete/" + todo.Id }
+					hx-confirm="Are you sure you want to delete this todo?"
+					hx-swap="outerHTML"
+					hx-target={ "#_" + todo.Id }
+					class="bg-red-500 text-white px-2 py-1 rounded"
+				>Delete</button>
+			</div>
+		</div>
+		<div
+			x-show.important="open"
+			class="p-2 rounded-lg shadow absolute w-screen flex justify-center items-center min-h-screen z-10 top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 backdrop-blur-lg"
+			id={ "edit_" + todo.Id }
+			style="display: none;"
+		>
+			<form
+				hx-post={ "/edit/" + todo.Id }
+				hx-on:submit.prevent="open = ! open"
+				hx-swap="outerHTML"
+				hx-target={ "#_" + todo.Id }
+				class="flex gap-2"
+			>
+				<input
+					type="text"
+					name="content"
+					value={ todo.Content }
+					class="w-full p-2 border border-gray-300 rounded"
+				/>
+				<button
+					type="submit"
+					class="bg-blue-500 text-white px-2 py-1 rounded"
+				>Save</button>
+				<button
+					class="bg-red-500 text-white px-2 py-1 rounded"
+					x-on:click="open = ! open"
+				>Close</button>
+			</form>
+		</div>
+	</div>
+}

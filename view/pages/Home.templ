@@ -1,0 +1,54 @@
+package pages
+
+import (
+	"github.com/Garv2003/TODOLIST/models"
+	"github.com/Garv2003/TODOLIST/view/components"
+	"github.com/Garv2003/TODOLIST/view/layout"
+)
+
+templ Home(TodoList []models.Todo, Error string, user models.User) {
+	@layout.Layout() {
+		<h1 class="text-3xl font-bold text-center">To Do List</h1>
+		if Error != "" {
+			<div class="bg-red-500 text-white p-2 rounded-lg text-center">
+				{ Error }
+			</div>
+		}
+		<div class="flex justify-between items-center mt-4 gap-2">
+			<p class="text-lg font-semibold">Hello, { user.Name }</p>
+			<button
+				hx-post="/logout"
+				hx-target="body"
+				hx-swap="outerHTML"
+				hx-push-url="/login"
+				class="bg-red-500 text-white p-2 rounded"
+			>Logout</button>
+		</div>
+		<div class="mt-4">
+			<div class="p-4 bg-orange-50 border rounded-lg border-red-700">
+				<div class="font-normal mb-2">
+					<form
+						hx-post="/add"
+						hx-target="#todo_list"
+						hx-swap="afterend"
+						method="POST"
+						hx-on:submit="document.querySelector('form').reset()"
+						class="flex gap-2 justify-between items-center"
+					>
+						<input
+							type="text"
+							name="content"
+							placeholder="Enter Todo"
+							class="w-full p-2 border rounded-lg border-gray-300"
+						/>
+						<button
+							type="submit"
+							class="bg-blue-500 text-white p-2 rounded"
+						>Add</button>
+					</form>
+				</div>
+				@components.TodoList(TodoList)
+			</div>
+		</div>
+	}
+}
