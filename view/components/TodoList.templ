@@ -3,9 +3,12 @@ package components
 import "github.com/Garv2003/TODOLIST/models"
 
 templ TodoList(TodoList []models.Todo) {
-	<div class="flex flex-col gap-2" id="todo_list">
+	<div
+		class="flex flex-col gap-2"
+		id="todo_list"
+	>
 		if len(TodoList) == 0 {
-			<p class="text-center">No Todos</p>
+			<p class="text-center" id="notodos">No Todos</p>
 		}
 		for _,todo:= range TodoList {
 			@Todo(todo)

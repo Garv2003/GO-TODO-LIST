@@ -32,7 +32,7 @@ templ Home(TodoList []models.Todo, Error string, user models.User) {
 						hx-target="#todo_list"
 						hx-swap="afterend"
 						method="POST"
-						hx-on:submit="document.querySelector('form').reset()"
+						hx-on:submit="document.querySelector('form').reset();document.querySelector('#notodos').remove();"
 						class="flex gap-2 justify-between items-center"
 					>
 						<input
